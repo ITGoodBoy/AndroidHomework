@@ -44,7 +44,7 @@ public class InfoActivity extends MvpLceViewStateActivity<TextView, String, Info
 
     @Override
     protected String getErrorMessage(Throwable throwable, boolean b) {
-        String message = throwable.toString();
+        String message = throwable.getMessage();
         return message == null ? "Unknown error" : message;
 
     }
