@@ -16,7 +16,7 @@ public class InfoModelImpl implements InfoModel {
             @Override
             protected String doInBackground(Void... params) {
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(5000);
                 } catch(InterruptedException e) {
                     e.printStackTrace();
                 }
