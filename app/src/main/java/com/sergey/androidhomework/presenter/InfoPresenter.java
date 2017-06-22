@@ -9,5 +9,5 @@ import com.sergey.androidhomework.view.InfoView;
 
 public interface InfoPresenter extends MvpPresenter<InfoView> {
 
-    void loadInformation(final boolean pullToRefresh);
+    void loadInformation();
 }

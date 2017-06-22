@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.MvpLceViewStateActivity;
@@ -17,11 +18,13 @@ import com.sergey.androidhomework.model.InfoModelImpl;
 import com.sergey.androidhomework.presenter.InfoPresenter;
 import com.sergey.androidhomework.presenter.InfoPresenterImpl;
 
+import java.util.List;
+
 /**
  * Created by Sergey on 19.06.2017.
  */
 
-public class InfoActivity extends MvpLceViewStateActivity<TextView, String, InfoView, InfoPresenter>
+public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<String>, InfoView, InfoPresenter>
         implements InfoView, SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -50,24 +53,30 @@ public class InfoActivity extends MvpLceViewStateActivity<TextView, String, Info
     }
 
     @Override
-    public void setData(String s) {
-        contentView.setText(s);
+    public void setData(final List<String> list) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                contentView.setLayoutManager(new LinearLayoutManager(InfoActivity.this));
+                contentView.setAdapter(new InfoAdapter(list));
+            }
+        });
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        getPresenter().loadInformation(pullToRefresh);
+        getPresenter().loadInformation();
     }
 
     @NonNull
     @Override
-    public LceViewState<String, InfoView> createViewState() {
+    public LceViewState<List<String>, InfoView> createViewState() {
         return new RetainingLceViewState<>();
     }
 
     @Override
-    public String getData() {
-        return contentView.getText().toString();
+    public List<String> getData() {
+        return ((InfoAdapter) contentView.getAdapter()).getList();
     }
 
     @Override
@@ -77,14 +86,24 @@ public class InfoActivity extends MvpLceViewStateActivity<TextView, String, Info
 
     @Override
     public void showContent() {
-        super.showContent();
-        swipeRefreshLayout.setRefreshing(false);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InfoActivity.super.showContent();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
-    public void showError(Throwable e, boolean pullToRefresh) {
-        super.showError(e, pullToRefresh);
-        swipeRefreshLayout.setRefreshing(false);
+    public void showError(final Throwable e, final boolean pullToRefresh) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InfoActivity.super.showError(e, pullToRefresh);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
