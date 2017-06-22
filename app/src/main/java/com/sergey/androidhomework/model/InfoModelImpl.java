@@ -1,40 +1,32 @@
 package com.sergey.androidhomework.model;
 
-import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.functions.Func1;
+import rx.functions.Func2;
 
 /**
  * Created by Sergey on 19.06.2017.
  */
 
 public class InfoModelImpl implements InfoModel {
+
+    private final List<String> list = new ArrayList<>();
+
     @Override
     public Observable<List<String>> retrieveInfo() {
-        return Observable.timer(1L, TimeUnit.SECONDS).flatMap(new Func1<Long, Observable<List<String>>>() {
-            @Override
-            public Observable<List<String>> call(Long aLong) {
-                Observable<List<String>> result;
-
-                List<String> list = new ArrayList<>();
-                list.add("some string 1");
-                list.add("some string 2");
-
-                if(Math.random() > 0.5) {
-                    result = Observable.just(list);
-                }
-                else {
-                    result = Observable.error(new IllegalStateException());
-                }
-                return result;
-            }
-        });
+        Observable<String> stringObservable = Observable.from(new String[]{"Hello", "World"});
+        return Observable
+                .range(1, 2)
+                .zipWith(stringObservable, new Func2<Integer, String, List<String>>() {
+                    @Override
+                    public List<String> call(Integer integer, String s) {
+                        list.add(integer + s);
+                        return list;
+                    }
+                });
     }
 }
 
