@@ -20,6 +20,9 @@ import com.sergey.androidhomework.presenter.InfoPresenterImpl;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Sergey on 19.06.2017.
  */
@@ -27,6 +30,7 @@ import java.util.List;
 public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<String>, InfoView, InfoPresenter>
         implements InfoView, SwipeRefreshLayout.OnRefreshListener {
 
+    @BindView(R.id.swipe_refresh_layout)
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -34,7 +38,7 @@ public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<Str
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setContentView(R.layout.screen_info);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        ButterKnife.bind(this);
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
@@ -45,6 +49,7 @@ public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<Str
         return new InfoPresenterImpl(infoModel);
     }
 
+    @Nullable
     @Override
     protected String getErrorMessage(Throwable throwable, boolean b) {
         String message = throwable.getMessage();
@@ -53,14 +58,9 @@ public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<Str
     }
 
     @Override
-    public void setData(final List<String> list) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                contentView.setLayoutManager(new LinearLayoutManager(InfoActivity.this));
-                contentView.setAdapter(new InfoAdapter(list));
-            }
-        });
+    public void setData(@NonNull final List<String> list) {
+        contentView.setLayoutManager(new LinearLayoutManager(InfoActivity.this));
+        contentView.setAdapter(new InfoAdapter(list));
     }
 
     @Override
@@ -74,6 +74,7 @@ public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<Str
         return new RetainingLceViewState<>();
     }
 
+    @NonNull
     @Override
     public List<String> getData() {
         return ((InfoAdapter) contentView.getAdapter()).getList();
@@ -86,24 +87,14 @@ public class InfoActivity extends MvpLceViewStateActivity<RecyclerView, List<Str
 
     @Override
     public void showContent() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InfoActivity.super.showContent();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        super.showContent();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void showError(final Throwable e, final boolean pullToRefresh) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InfoActivity.super.showError(e, pullToRefresh);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        super.showError(e, pullToRefresh);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

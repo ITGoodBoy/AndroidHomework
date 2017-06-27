@@ -1,6 +1,5 @@
 package com.sergey.androidhomework.view;
 
-import com.hannesdorfmann.mosby.mvp.MvpView;
 import com.hannesdorfmann.mosby.mvp.lce.MvpLceView;
 
 import java.util.List;
